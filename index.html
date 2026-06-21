@@ -143,6 +143,17 @@
                 position: fixed; /* 상단 고정 유지 */
                 align-items: flex-start; 
             }
+            /* 📱 @media (max-width: 768px) 블록 내부에 이 코드를 삽입하세요 */
+
+.amount-chip {
+    font-size: 12px !important; /* 기존 14px에서 12px로 축소 */
+    padding: 8px 5px !important; /* 모바일 화면에 맞춰 패딩도 살짝 줄여 여백 확보 */
+}
+
+/* 기업 매칭 후원 등 칩 내부에 하단 작은 글씨가 있는 경우 */
+.amount-chip span {
+    font-size: 9px !important; /* 하단 플러스 기부 안내 글씨 크기도 조정 */
+}
             .logo-wrapper { 
                 width: 100%; 
                 padding: 15px 20px; 

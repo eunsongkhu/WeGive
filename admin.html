@@ -29,7 +29,16 @@
             padding: 0 40px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100;
         }
         .logo { font-size: 20px; font-weight: 800; color: var(--primary-color); }
-        .header-title { margin-left: 20px; font-size: 16px; font-weight: 500; color: var(--text-sub); border-left: 1px solid var(--border-color); padding-left: 20px; }
+        .header-title { margin-left: 20px; font-size: 16px; font-weight: 500; color: var(--text-sub); border-left: 1px solid var(--border-color); padding-left: 20px; flex-grow: 1; }
+
+        /* 새로고침 버튼 스타일 */
+        .refresh-btn {
+            display: flex; align-items: center; gap: 5px; background: var(--bg-color);
+            border: 1px solid var(--border-color); padding: 8px 15px; border-radius: 8px;
+            cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-main); transition: all 0.2s;
+        }
+        .refresh-btn:hover { background: #e2e6ea; }
+        .refresh-btn .material-symbols-outlined { font-size: 18px; }
 
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
         
@@ -69,6 +78,9 @@
     <header>
         <div class="logo">WeGive Admin</div>
         <div class="header-title">관리자 데이터 대시보드</div>
+        <button onclick="refreshData()" class="refresh-btn" id="refresh-btn">
+            <span class="material-symbols-outlined">refresh</span> 데이터 새로고침
+        </button>
     </header>
 
     <div class="container">
@@ -132,6 +144,38 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- 추가된 사용자 연령 및 성별 통계 -->
+            <div class="table-wrapper" style="grid-column: 1 / -1;">
+                <h2 class="section-title" style="font-size: 18px;"><span class="material-symbols-outlined">face</span> 사용자 연령 및 성별 분포</h2>
+                <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+                    <table style="flex: 1; min-width: 250px;">
+                        <thead>
+                            <tr>
+                                <th>연령대</th>
+                                <th class="text-right">인원 수</th>
+                                <th class="text-right">비율</th>
+                            </tr>
+                        </thead>
+                        <tbody id="age-tbody">
+                            <tr><td colspan="3" style="text-align:center; color:#999;">데이터를 불러오는 중...</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <table style="flex: 1; min-width: 250px;">
+                        <thead>
+                            <tr>
+                                <th>성별</th>
+                                <th class="text-right">인원 수</th>
+                                <th class="text-right">비율</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gender-tbody">
+                            <tr><td colspan="3" style="text-align:center; color:#999;">데이터를 불러오는 중...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <!-- 버그 제보 목록 -->
@@ -152,8 +196,19 @@
 
     </div>
 
+<!-- 인증 모달 -->
+<div id="auth-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2b2d42; display: flex; justify-content: center; align-items: center; z-index: 9999;">
+    <div style="background: white; padding: 35px 30px; border-radius: 20px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <span class="material-symbols-outlined" style="font-size: 48px; color: var(--primary-color); margin-bottom: 10px;">lock</span>
+        <h3 style="margin: 10px 0 5px 0; font-size: 20px;">관리자 인증</h3>
+        <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 20px;">데이터 보호를 위해 비밀번호를 입력하세요.</p>
+        <input type="password" id="admin-password" placeholder="비밀번호 입력" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; outline: none; text-align: center; margin-bottom: 15px;" onkeyup="if(window.event.keyCode==13){checkAdminPassword()}">
+        <button onclick="checkAdminPassword()" style="width: 100%; padding: 12px; border: none; border-radius: 8px; background: var(--primary-color); color: white; font-size: 16px; font-weight: bold; cursor: pointer;">확인</button>
+    </div>
+</div>
+
 <script>
-    // Firebase 설정 (index.html과 동일)
+    // Firebase 설정
     const firebaseConfig = {
         apiKey: "AIzaSyDh2Rin87cRXVxf5eTidxnrO93x0M7e4Dc",
         authDomain: "globalcitizenship-271c4.firebaseapp.com",
@@ -169,6 +224,41 @@
         db = firebase.firestore();
     } catch (e) {
         console.error("Firebase 초기화 에러:", e);
+    }
+
+    // 🔐 관리자 인증 로직 (세션 스토리지 적용)
+    document.addEventListener("DOMContentLoaded", () => {
+        if (sessionStorage.getItem('isAdminAuth') === 'true') {
+            document.getElementById('auth-modal').style.display = 'none';
+        }
+    });
+
+    function checkAdminPassword() {
+        const pw = document.getElementById('admin-password').value;
+        if (pw === '20160309') { 
+            sessionStorage.setItem('isAdminAuth', 'true');
+            document.getElementById('auth-modal').style.display = 'none';
+        } else {
+            alert('비밀번호가 일치하지 않습니다.');
+            document.getElementById('admin-password').value = '';
+            document.getElementById('admin-password').focus();
+        }
+    }
+
+    // 데이터 새로고침 함수
+    function refreshData() {
+        const btn = document.getElementById('refresh-btn');
+        const icon = btn.querySelector('.material-symbols-outlined');
+        
+        icon.style.transform = "rotate(180deg)";
+        icon.style.transition = "transform 0.3s";
+        
+        loadStats();
+        loadBugReports();
+
+        setTimeout(() => {
+            icon.style.transform = "rotate(0deg)";
+        }, 300);
     }
 
     // 날짜 포맷 함수
@@ -197,7 +287,6 @@
             let ratingCount = 0;
             let usageCheckedCount = 0;
 
-            // 할당된 기부 방식 통계 객체
             const assignedStats = {
                 '정기': { visits: 0, completed: 0 },
                 '일회성': { visits: 0, completed: 0 },
@@ -206,12 +295,16 @@
                 '신용카드 포인트': { visits: 0, completed: 0 }
             };
 
-            // 설문 선호 방식 통계 객체
             const bestTypeStats = {};
             let bestTypeTotalCount = 0;
 
+            const ageStats = {};
+            let ageTotalCount = 0;
+            
+            const genderStats = {};
+            let genderTotalCount = 0;
+
             docs.forEach(data => {
-                // 요약 데이터 계산
                 if (data.hasDonated) totalDonated++;
                 if (data.rating) {
                     totalRating += data.rating;
@@ -219,31 +312,39 @@
                 }
                 if (data.checkedUsageHistory) usageCheckedCount++;
 
-                // 배정 방식 계산
                 if (data.type && assignedStats[data.type]) {
                     assignedStats[data.type].visits++;
                     if (data.hasDonated) assignedStats[data.type].completed++;
                 }
 
-                // 선호 방식 계산 (설문 완료자 기준)
                 if (data.bestType) {
                     if (!bestTypeStats[data.bestType]) bestTypeStats[data.bestType] = 0;
                     bestTypeStats[data.bestType]++;
                     bestTypeTotalCount++;
                 }
+
+                if (data.age) {
+                    if (!ageStats[data.age]) ageStats[data.age] = 0;
+                    ageStats[data.age]++;
+                    ageTotalCount++;
+                }
+
+                if (data.gender) {
+                    if (!genderStats[data.gender]) genderStats[data.gender] = 0;
+                    genderStats[data.gender]++;
+                    genderTotalCount++;
+                }
             });
 
-            // 1. 요약 카드 업데이트
+            // 요약 업데이트
             document.getElementById('stat-total-visits').innerText = totalVisits + "명";
             document.getElementById('stat-total-donated').innerText = totalDonated + "명";
-            
             const avgRating = ratingCount > 0 ? (totalRating / ratingCount).toFixed(1) : "0.0";
             document.getElementById('stat-avg-rating').innerText = avgRating + " / 5.0";
-
             const usageRate = totalVisits > 0 ? Math.round((usageCheckedCount / totalVisits) * 100) : 0;
             document.getElementById('stat-usage-checked').innerText = usageRate + "%";
 
-            // 2. 배정 방식별 전환율 테이블 업데이트
+            // 배정 방식 업데이트
             const assignedTbody = document.getElementById('assigned-type-tbody');
             assignedTbody.innerHTML = '';
             for (const [type, stats] of Object.entries(assignedStats)) {
@@ -258,13 +359,10 @@
                 `;
             }
 
-            // 3. 선호 기부 방식 테이블 업데이트
+            // 선호 방식 업데이트
             const bestTypeTbody = document.getElementById('best-type-tbody');
             bestTypeTbody.innerHTML = '';
-            
-            // 객체를 배열로 변환하여 투표수 기준 내림차순 정렬
             const sortedBestTypes = Object.entries(bestTypeStats).sort((a, b) => b[1] - a[1]);
-            
             if (sortedBestTypes.length === 0) {
                 bestTypeTbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#999;">아직 설문 응답이 없습니다.</td></tr>`;
             } else {
@@ -280,13 +378,51 @@
                 });
             }
 
+            // 연령대 업데이트
+            const ageTbody = document.getElementById('age-tbody');
+            ageTbody.innerHTML = '';
+            const sortedAges = Object.entries(ageStats).sort((a, b) => b[1] - a[1]);
+            if (sortedAges.length === 0) {
+                ageTbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#999;">데이터가 없습니다.</td></tr>`;
+            } else {
+                sortedAges.forEach(([age, count]) => {
+                    const rate = ageTotalCount > 0 ? Math.round((count / ageTotalCount) * 100) : 0;
+                    ageTbody.innerHTML += `
+                        <tr>
+                            <td><strong>${age}</strong></td>
+                            <td class="text-right">${count}명</td>
+                            <td class="text-right" style="color:var(--primary-color); font-weight:bold;">${rate}%</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // 성별 업데이트
+            const genderTbody = document.getElementById('gender-tbody');
+            genderTbody.innerHTML = '';
+            const sortedGenders = Object.entries(genderStats).sort((a, b) => b[1] - a[1]);
+            if (sortedGenders.length === 0) {
+                genderTbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#999;">데이터가 없습니다.</td></tr>`;
+            } else {
+                sortedGenders.forEach(([gender, count]) => {
+                    const rate = genderTotalCount > 0 ? Math.round((count / genderTotalCount) * 100) : 0;
+                    genderTbody.innerHTML += `
+                        <tr>
+                            <td><strong>${gender}</strong></td>
+                            <td class="text-right">${count}명</td>
+                            <td class="text-right" style="color:var(--primary-color); font-weight:bold;">${rate}%</td>
+                        </tr>
+                    `;
+                });
+            }
+
         } catch (error) {
             console.error("통계 로드 실패:", error);
-            document.getElementById('assigned-type-tbody').innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">데이터를 불러오는 중 오류가 발생했습니다.</td></tr>`;
+            alert("데이터를 불러오는 중 오류가 발생했습니다.");
         }
     }
 
-    // 버그 제보 로드 (최신순 정렬)
+    // 버그 제보 로드
     async function loadBugReports() {
         if (!db) return;
 
@@ -311,7 +447,6 @@
             });
         } catch (error) {
             console.error("버그 리포트 로드 실패:", error);
-            document.getElementById('bug-tbody').innerHTML = `<tr><td colspan="2" style="text-align:center; color:red;">데이터를 불러오는 중 오류가 발생했습니다.</td></tr>`;
         }
     }
 
@@ -320,29 +455,6 @@
         loadStats();
         loadBugReports();
     };
-</script>
-    <div id="auth-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2b2d42; display: flex; justify-content: center; align-items: center; z-index: 9999;">
-    <div style="background: white; padding: 35px 30px; border-radius: 20px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-        <span class="material-symbols-outlined" style="font-size: 48px; color: var(--primary-color); margin-bottom: 10px;">lock</span>
-        <h3 style="margin: 10px 0 5px 0; font-size: 20px;">관리자 인증</h3>
-        <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 20px;">데이터 보호를 위해 비밀번호를 입력하세요.</p>
-        <input type="password" id="admin-password" placeholder="비밀번호 입력" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; outline: none; text-align: center; margin-bottom: 15px;" onkeyup="if(window.event.keyCode==13){checkAdminPassword()}">
-        <button onclick="checkAdminPassword()" style="width: 100%; padding: 12px; border: none; border-radius: 8px; background: var(--primary-color); color: white; font-size: 16px; font-weight: bold; cursor: pointer;">확인</button>
-    </div>
-</div>
-
-<script>
-    // 🔐 비밀번호 검증 함수 (기존 window.onload 함수 맨 앞이나 스크립트 내부에 추가)
-    function checkAdminPassword() {
-        const pw = document.getElementById('admin-password').value;
-        if (pw === '20160309') { // 사용하시던 비밀번호로 변경하세요 (예: 1234)
-            document.getElementById('auth-modal').style.display = 'none';
-        } else {
-            alert('비밀번호가 일치하지 않습니다.');
-            document.getElementById('admin-password').value = '';
-            document.getElementById('admin-password').focus();
-        }
-    }
 </script>
 </body>
 </html>

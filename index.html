@@ -17,6 +17,7 @@
             --text-sub: #6c757d;
             --border-color: #e9ecef;
             --green-color: #059669;
+            --brown-color: #8d7057; /* 이미지 기준 갈색 포인트 컬러 */
         }
         * { box-sizing: border-box; font-family: 'Noto Sans KR', sans-serif; }
         body { background-color: #f4f6f9; margin: 0; padding: 0; min-height: 100vh; color: var(--text-main); overflow-x: hidden; }
@@ -31,7 +32,6 @@
         .logo-wrapper { display: flex; align-items: center; justify-content: space-between; }
         .logo { font-size: 22px; font-weight: 800; color: var(--primary-color); letter-spacing: -0.5px; }
         
-        /* 햄버거 버튼 (PC에서는 숨김) */
         .hamburger-btn { display: none; cursor: pointer; font-size: 28px; color: var(--text-main); }
 
         .top-menu { list-style: none; padding: 0; margin: 0; display: flex; gap: 24px; align-items: center; }
@@ -115,91 +115,72 @@
         .stars label:hover, .stars label:hover ~ label, .stars input:checked ~ label { color: #ffd700; }
         select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 15px; margin: 10px 0 20px 0; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; padding: 30px 25px 25px 25px; border-radius: 20px; width: 90%; max-width: 380px; text-align: center; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; }
-        .modal-close { position: absolute; top: 15px; right: 15px; cursor: pointer; color: #999; background: none; border: none; font-size: 16px; font-weight: bold; padding: 5px; }
-        .modal-close:hover { color: #555; }
-        .modal-content h3 { margin-top: 5px; font-size: 19px; color: #d62828; line-height: 1.4; }
+        /* 📝 새 결제 화면 레이아웃 스태일 */
+        .pay-page-container { background: white; width: 100%; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 40px; }
+        .pay-notice-header { background: #fff5f5; border: 1px dashed #f3abb0; padding: 12px; border-radius: 8px; text-align: center; color: #d62828; font-size: 13px; font-weight: bold; margin-bottom: 25px; }
         
-        .gender-group { display: flex; justify-content: space-around; margin: 15px 0; }
-        .gender-group label { cursor: pointer; padding: 10px 20px; border: 1px solid var(--border-color); border-radius: 8px; width: 44%; font-size: 14px; background: white; }
-        .gender-group input[type="radio"] { display: none; }
-        .gender-group input[type="radio"]:checked + label { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .pay-section-title { font-size: 18px; font-weight: 700; border-bottom: 2px solid var(--text-main); padding-bottom: 8px; margin: 30px 0 15px 0; }
+        
+        .form-row { display: grid; grid-template-columns: 140px 1fr auto; gap: 12px; align-items: center; margin-bottom: 15px; }
+        .form-label { font-size: 14px; font-weight: 500; color: #333; }
+        .form-input-wrapper { display: flex; gap: 8px; align-items: center; width: 100%; }
+        .form-row input[type="text"], .form-row input[type="number"], .form-row select { width: 100%; padding: 11px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; outline: none; margin: 0; }
+        
+        .btn-auto-fill { background: #f1f3f9; border: 1px solid #ccc; color: #555; padding: 11px 14px; font-size: 13px; font-weight: 500; border-radius: 4px; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+        .btn-auto-fill:hover { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-        .consent-box { display: flex; align-items: flex-start; text-align: left; margin: 15px 0; background: #f8f9fa; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); }
-        .consent-box input[type="checkbox"] { width: auto; margin: 3px 8px 0 0; cursor: pointer; }
-        .consent-box label { font-size: 12px; color: #555; line-height: 1.4; cursor: pointer; }
-        .modal-content select { margin: 5px 0 15px 0; }
-        .modal-content button.btn-submit-modal { margin: 5px 0; padding: 12px; font-weight: bold; font-size: 16px; border-radius: 8px; border: none; background: var(--primary-color); color: white; cursor: pointer; width: 100%; }
+        /* 이미지(image_502560.png) 기반 탭 메뉴 스타일 */
+        .pay-tab-menu { display: flex; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; margin-bottom: 15px; background: #f8f9fa; }
+        .pay-tab-item { flex: 1; text-align: center; padding: 15px 10px; font-size: 15px; font-weight: 500; cursor: pointer; border-right: 1px solid #ddd; color: #555; }
+        .pay-tab-item:last-child { border-right: none; }
+        .pay-tab-item.active { background: var(--brown-color); color: white; font-weight: bold; }
+        
+        .tab-notice { color: #d62828; font-size: 13px; font-weight: 500; margin-bottom: 20px; }
+        
+        /* 결제 수단별 박스 */
+        .pay-method-content { border: 1px solid #eee; padding: 25px 20px; border-radius: 8px; background: #fafafa; }
+        .btn-group-3 { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid #ccc; border-radius: 4px; overflow: hidden; }
+        .btn-group-item { background: white; padding: 12px; text-align: center; cursor: pointer; border-right: 1px solid #ccc; font-size: 14px; }
+        .btn-group-item:last-child { border-right: none; }
+        .btn-group-item.active { background: var(--brown-color); color: white; font-weight: bold; }
 
-        textarea { font-family: inherit; }
+        .btn-easy-pay { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 16px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; margin-top: 10px; }
+        
+        /* 로딩 애니메이션 */
+        .loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:2000; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #e0e0e0; border-top: 5px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* 버그 제보 모달 */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px 25px; border-radius: 20px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; }
+        .modal-close { position: absolute; top: 15px; right: 15px; cursor: pointer; color: #999; background: none; border: none; font-size: 16px; font-weight: bold; padding: 5px; }
+        
         /* 📱 모바일 반응형 처리 */
         @media (max-width: 768px) {
-            header { 
-                flex-direction: column; 
-                padding: 0; 
-                height: auto; 
-                position: fixed; /* 상단 고정 유지 */
-                align-items: flex-start; 
-            }
-            /* 📱 @media (max-width: 768px) 블록 내부에 이 코드를 삽입하세요 */
-
-.amount-chip {
-    font-size: 12px !important; /* 기존 14px에서 12px로 축소 */
-    padding: 8px 5px !important; /* 모바일 화면에 맞춰 패딩도 살짝 줄여 여백 확보 */
-}
-
-/* 기업 매칭 후원 등 칩 내부에 하단 작은 글씨가 있는 경우 */
-.amount-chip span {
-    font-size: 9px !important; /* 하단 플러스 기부 안내 글씨 크기도 조정 */
-}
-            .logo-wrapper { 
-                width: 100%; 
-                padding: 15px 20px; 
-                box-sizing: border-box; 
-                background: white; /* 배경색 지정으로 뒤에 내용 비침 방지 */
-                z-index: 901;
-            }
+            header { flex-direction: column; padding: 0; height: auto; position: fixed; align-items: flex-start; }
+            .logo-wrapper { width: 100%; padding: 15px 20px; box-sizing: border-box; background: white; z-index: 901; }
             .logo { margin: 0; }
-            .hamburger-btn { display: block; } /* 모바일에서 햄버거 버튼 보이기 */
+            .hamburger-btn { display: block; }
 
-            /* 드롭다운 메뉴 스타일 */
-            .top-menu { 
-                display: none; /* 기본으로 숨김 */
-                flex-direction: column; 
-                width: 100%; 
-                background: white; 
-                position: absolute; 
-                top: 100%; 
-                left: 0; 
-                box-shadow: 0 10px 15px rgba(0,0,0,0.05); 
-                padding: 0; 
-                gap: 0; 
-                z-index: 900;
-            }
-            .top-menu.show { display: flex; } /* show 클래스 추가 시 보이기 */
-            .top-menu li { 
-                padding: 15px 20px; 
-                width: 100%; 
-                border-top: 1px solid #f1f3f9; 
-                text-align: left; 
-                box-sizing: border-box; 
-                font-size: 15px; 
-            }
+            .top-menu { display: none; flex-direction: column; width: 100%; background: white; position: absolute; top: 100%; left: 0; box-shadow: 0 10px 15px rgba(0,0,0,0.05); padding: 0; gap: 0; z-index: 900; }
+            .top-menu.show { display: flex; }
+            .top-menu li { padding: 15px 20px; width: 100%; border-top: 1px solid #f1f3f9; text-align: left; box-sizing: border-box; font-size: 15px; }
             .bug-report-btn { justify-content: flex-start; gap: 8px; }
 
-            .main-wrapper { flex-direction: column; min-height: auto; margin-top: 80px; gap: 20px; } /* header 높이 변화로 margin 조정 */
-            
-            .left-banner { min-height: 350px; padding: 25px; height: auto; width: 100%; }
-            .left-banner .banner-tag { font-size: 10px; padding: 3px 10px; margin-bottom: 8px; }
-            .left-banner h1 { font-size: 24px; margin-bottom: 8px; }
-            .left-banner p { font-size: 14px; line-height: 1.4; }
-            
-            .right-content { padding: 25px; width: 100%; }
-            .campaign-meta { grid-template-columns: max-content auto; gap: 8px 15px; }
-            .budget-header, .budget-row { flex-direction: column; gap: 5px; }
-            .budget-row .category, .budget-header .col-title { font-size: 11px; color: var(--primary-color); }
+            .main-wrapper { flex-direction: column; min-height: auto; margin-top: 80px; gap: 20px; width: 95%; }
+            .left-banner { display: none; } /* 결제 진입 전 메인 화면에서도 모바일 크기 맞춤 지원 */
+            .right-content { padding: 20px; width: 100%; }
+
+            /* 금액 칩 가독성 확보 */
+            .amount-chip { font-size: 12px !important; padding: 8px 5px !important; }
+            .amount-chip span { font-size: 9px !important; }
+
+            /* 결제창 모바일 레이아웃 */
+            .pay-page-container { padding: 20px 15px; }
+            .form-row { grid-template-columns: 1fr auto; gap: 6px; margin-bottom: 20px; }
+            .form-label { grid-column: 1 / -1; font-weight: bold; margin-bottom: -2px; }
+            .btn-auto-fill { padding: 11px; }
         }
     </style>
 </head>
@@ -217,168 +198,302 @@
             <li onclick="changeTypeDirect('크라우드 펀딩')">크라우드 펀딩</li>
             <li onclick="changeTypeDirect('매칭')">기업 매칭 후원</li>
             <li onclick="changeTypeDirect('신용카드 포인트')">카드 포인트 기부</li>
-            <li class="bug-report-btn" onclick="openBugModal()" title="버그 및 개선 제보">
+            <li class="bug-report-btn" onclick="openBugModal()">
                 <span class="material-symbols-outlined" style="font-size: 20px;">bug_report</span>
-                <span class="bug-text" style="display: none;">버그 제보</span> </li>
+                <span class="bug-text" style="display: none;">버그 제보</span>
+            </li>
         </ul>
     </header>
 
-    <div class="main-wrapper">
-        <div class="left-banner">
+    <!-- 🌟 메인 래퍼 (기부 정보 입력 / 결제 입력창 전환 공간) -->
+    <div class="main-wrapper" id="main-content-wrapper">
+        
+        <!-- [메인 화면 좌측] 배너 공통 -->
+        <div class="left-banner" id="view-left-banner">
             <div class="banner-tag">WeGive Campaign</div>
             <h1>다시 꿈꿀 수 있도록</h1>
             <p>오늘 한 번의 따뜻한 손길이 결식 아동들의 든든한 한 끼 식사와 더 나은 내일을 만들어 줍니다.</p>
         </div>
 
-        <div class="right-content">
+        <!-- [메인 화면 우측] 1단계: 후원 기부 구성 선택란 -->
+        <div class="right-content" id="view-donation">
+            <h2 id="donation-title">기부 페이지</h2>
+            <div id="donation-desc" class="desc">방식을 로딩 중입니다...</div>
             
-            <div id="view-donation">
-                <h2 id="donation-title">기부 페이지</h2>
-                <div id="donation-desc" class="desc">방식을 로딩 중입니다...</div>
+            <div id="donation-ui-container" class="donation-ui-box"></div>
+
+            <button onclick="goToPaymentPage()" class="btn-submit">후원하기</button>
+
+            <div class="usage-toggle-wrapper">
+                <button onclick="toggleUsageHistory()" class="btn-usage-toggle">
+                    <span>💡 내가 낸 기부금은 어떻게 사용되나요?</span>
+                    <span id="toggle-icon" class="material-symbols-outlined" style="font-size:18px;">expand_more</span>
+                </button>
                 
-                <div id="donation-ui-container" class="donation-ui-box"></div>
-
-                <button onclick="openSignupModal()" class="btn-submit">후원 완료하기</button>
-
-                <div class="usage-toggle-wrapper">
-                    <button onclick="toggleUsageHistory()" class="btn-usage-toggle">
-                        <span>💡 내가 낸 기부금은 어떻게 사용되나요?</span>
-                        <span id="toggle-icon" class="material-symbols-outlined" style="font-size:18px;">expand_more</span>
-                    </button>
-                    
-                    <div id="usage-content" class="usage-content-box hidden">
-                        <h3>이렇게 진행됩니다</h3>
-                        
-                        <div class="campaign-meta">
-                            <div class="meta-label">모금기간</div><div>2026.06.20 ~ 2026.08.20</div>
-                            <div class="meta-label">사업기간</div><div>2026.06.20 ~ 2026.10.31</div>
-                            <div class="meta-label">대상</div><div>결식우려아동</div>
-                            <div class="meta-label">대상 수</div><div>100명</div>
-                            <div class="meta-label">기부금 공제</div><div style="grid-column: 2 / -1;">일반기부금</div>
-                        </div>
-
-                        <div class="budget-table">
-                            <div class="budget-header">
-                                <div class="col-title">목표금액</div>
-                                <div class="col-value">총 5,000,000원</div>
-                            </div>
-                            <div class="budget-row">
-                                <div class="category">사업비</div>
-                                <div class="details">
-                                    <span class="amount">2,750,000원</span>
-                                    <span class="desc">ㄴ 아동 급식 전문 식단 및 식재료 지원</span>
-                                </div>
-                            </div>
-                            <div class="budget-row">
-                                <div class="category">사업비</div>
-                                <div class="details">
-                                    <span class="amount">1,250,000원</span>
-                                    <span class="desc">ㄴ 결식 우려 아동 주거환경 개선 펀드</span>
-                                </div>
-                            </div>
-                            <div class="budget-row">
-                                <div class="category">사업비</div>
-                                <div class="details">
-                                    <span class="amount">750,000원</span>
-                                    <span class="desc">ㄴ 심리 정서 상담 및 맞춤형 교육</span>
-                                </div>
-                            </div>
-                            <div class="more-btn-row">더보기 ></div>
-                        </div>
-
-                        <div class="assurance-box">
-                            <div class="assurance-title">
-                                <span class="material-symbols-outlined">check_circle</span>
-                                목표금액 미달 시
-                            </div>
-                            <div style="font-size: 13px; color: #555;">단체에서 금액을 보태어 사업을 진행하겠습니다.</div>
-                        </div>
+                <div id="usage-content" class="usage-content-box hidden">
+                    <h3>이렇게 진행됩니다</h3>
+                    <div class="campaign-meta">
+                        <div class="meta-label">모금기간</div><div>2026.06.20 ~ 2026.08.20</div>
+                        <div class="meta-label">사업기간</div><div>2026.06.20 ~ 2026.10.31</div>
+                        <div class="meta-label">대상</div><div>결식우려아동</div>
+                        <div class="meta-label">대상 수</div><div>100명</div>
+                        <div class="meta-label">기부금 공제</div><div style="grid-column: 2 / -1;">일반기부금</div>
+                    </div>
+                    <div class="budget-table">
+                        <div class="budget-header"><div class="col-title">목표금액</div><div class="col-value">총 5,000,000원</div></div>
+                        <div class="budget-row"><div class="category">사업비</div><div class="details"><span class="amount">2,750,000원</span><span class="desc">ㄴ 아동 급식 전문 식단 및 식재료 지원</span></div></div>
+                        <div class="budget-row"><div class="category">사업비</div><div class="details"><span class="amount">1,250,000원</span><span class="desc">ㄴ 결식 우려 아동 주거환경 개선 펀드</span></div></div>
+                        <div class="budget-row"><div class="category">사업비</div><div class="details"><span class="amount">750,000원</span><span class="desc">ㄴ 심리 정서 상담 및 맞춤형 교육</span></div></div>
+                        <div class="more-btn-row">더보기 &gt;</div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div id="view-survey" class="hidden">
-                <h2>의견 제출 (마지막 단계)</h2>
-                <div class="desc">실제 결제는 일어나지 않았으니 안심하세요.<br>아래 설문에 응해주시면 연구에 큰 도움이 됩니다.</div>
+        <!-- 2단계: 설문조사창 (우측 레이아웃 유지) -->
+        <div class="right-content hidden" id="view-survey">
+            <h2>의견 제출 (마지막 단계)</h2>
+            <div class="desc">실제 결제는 일어나지 않았으니 안심하세요.<br>아래 설문에 응해주시면 연구에 큰 도움이 됩니다.</div>
+            <hr style="border: 0.5px solid var(--border-color); margin-bottom: 20px;">
+            <p style="font-weight: 500; margin: 0 0 5px 0;">1. 방금 체험하신 기부 방식은 편리했나요?</p>
+            <div class="stars">
+                <input type="radio" id="st5" name="rating" value="5"><label for="st5">★</label>
+                <input type="radio" id="st4" name="rating" value="4"><label for="st4">★</label>
+                <input type="radio" id="st3" name="rating" value="3"><label for="st3">★</label>
+                <input type="radio" id="st2" name="rating" value="2"><label for="st2">★</label>
+                <input type="radio" id="st1" name="rating" value="1"><label for="st1">★</label>
+            </div>
+            <p style="font-weight: 500; margin: 15px 0 5px 0;">2. 5가지 방식 중 가장 기부하고 싶은 방식은?</p>
+            <select id="best-type-select">
+                <option value="">선택해주세요</option>
+                <option value="정기">정기 기부 (매달 정기 자동 이체)</option>
+                <option value="일회성">일회성 기부 (원할 때 한 번만 결제)</option>
+                <option value="크라우드 펀딩">크라우드 펀딩 (목표 금액 달성 시 기부)</option>
+                <option value="매칭">매칭 기부 (내가 낸 만큼 기업이 더블 기부)</option>
+                <option value="신용카드 포인트">카드 연동 기부 (내 잔여 카드 포인트 활용)</option>
+            </select>
+            <button onclick="handleSurveySubmit()" class="btn-submit" style="background: var(--primary-color);">설문 제출하고 마치기</button>
+        </div>
+
+        <!-- 3단계: 완료 페이지 (우측 레이아웃 유지) -->
+        <div class="right-content hidden" id="view-thanks">
+            <span class="material-symbols-outlined" style="font-size: 64px; color: #2a9d8f; margin-bottom: 15px;">task_alt</span>
+            <h2>참여해주셔서 감사합니다!</h2>
+            <div class="desc">제출하신 소중한 데이터는 UI/UX 분석 연구 목적으로만 안전하게 활용됩니다.</div>
+        </div>
+
+    </div>
+
+    <!-- 💳 [동적 삽입용] 결제 페이지 템플릿 (후원하기 클릭 시 전체 영역 대체 표출용) -->
+    <div id="payment-page-template" class="hidden">
+        <div class="pay-page-container">
+            <div class="pay-notice-header">
+                ⚠️ 본 페이지는 연구용 모의 창입니다. 실제 결제는 이루어지지 않으며, 진짜 개인정보 및 금융정보는 입력하지 마세요!
+            </div>
+            
+            <div class="pay-section-title">1. 후원자 정보입력 및 약관동의</div>
+            
+            <div class="form-row">
+                <div class="form-label">성별</div>
+                <div class="form-input-wrapper">
+                    <select id="pay-gender">
+                        <option value="">성별을 선택하세요</option>
+                        <option value="남성">남성</option>
+                        <option value="여성">여성</option>
+                    </select>
+                </div>
+                <button class="btn-auto-fill" onclick="autoFillField('gender')">자동 완성</button>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label">나이대</div>
+                <div class="form-input-wrapper">
+                    <select id="pay-age">
+                        <option value="">나이대를 선택하세요</option>
+                        <option value="10대">10대</option>
+                        <option value="20대">20대</option>
+                        <option value="30대">30대</option>
+                        <option value="40대">40대</option>
+                        <option value="50대 이상">50대 이상</option>
+                    </select>
+                </div>
+                <button class="btn-auto-fill" onclick="autoFillField('age')">자동 완성</button>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label">연구 약관 동의</div>
+                <div class="form-input-wrapper">
+                    <label style="font-size:13px; display:flex; align-items:center; gap:5px; color:#555;">
+                        <input type="checkbox" id="pay-agree" style="width:16px; height:16px;"> 수집된 성별, 연령 정보는 연구 목적으로만 안전하게 활용됨에 동의합니다. (필수)
+                    </label>
+                </div>
+                <button class="btn-auto-fill" onclick="autoFillField('agree')">자동 완성</button>
+            </div>
+
+            <div class="pay-section-title">2. 결제 정보 입력</div>
+            
+            <!-- 상단 탭 메뉴 레이아웃 (image_502560.png 참조) -->
+            <div class="pay-tab-menu">
+                <div class="pay-tab-item active" id="tab-cms" onclick="switchPayTab('cms')">자동이체(CMS)</div>
+                <div class="pay-tab-item" id="tab-card" onclick="switchPayTab('card')">신용카드</div>
+                <div class="pay-tab-item" id="tab-kakao" onclick="switchPayTab('kakao')">카카오페이</div>
+                <div class="pay-tab-item" id="tab-toss" onclick="switchPayTab('toss')">토스페이</div>
+            </div>
+
+            <!-- 결제 세부 패널 콘텐츠 본문 영역 -->
+            <div class="pay-method-content">
                 
-                <hr style="border: 0.5px solid var(--border-color); margin-bottom: 20px;">
-                
-                <p style="font-weight: 500; margin: 0 0 5px 0;">1. 방금 체험하신 기부 방식은 편리했나요?</p>
-                <div class="stars">
-                    <input type="radio" id="st5" name="rating" value="5"><label for="st5">★</label>
-                    <input type="radio" id="st4" name="rating" value="4"><label for="st4">★</label>
-                    <input type="radio" id="st3" name="rating" value="3"><label for="st3">★</label>
-                    <input type="radio" id="st2" name="rating" value="2"><label for="st2">★</label>
-                    <input type="radio" id="st1" name="rating" value="1"><label for="st1">★</label>
+                <!-- [A] 자동이체 패널 -->
+                <div id="panel-cms">
+                    <div class="tab-notice">자동이체(CMS) 신청 시 자동이체 동의 인증이 필요합니다.</div>
+                    
+                    <div class="form-row">
+                        <div class="form-label">은행선택</div>
+                        <div class="form-input-wrapper">
+                            <select id="cms-bank">
+                                <option value="">은행을 선택해 주세요</option>
+                                <option value="신한은행">신한은행</option>
+                                <option value="국민은행">국민은행</option>
+                                <option value="우리은행">우리은행</option>
+                                <option value="하나은행">하나은행</option>
+                                <option value="카카오뱅크">카카오뱅크</option>
+                            </select>
+                        </div>
+                        <button class="btn-auto-fill" onclick="autoFillField('cms-bank')">자동 완성</button>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-label">계좌번호</div>
+                        <div class="form-input-wrapper">
+                            <input type="text" id="cms-account" placeholder="'-' 제외하고 입력해 주세요">
+                        </div>
+                        <button class="btn-auto-fill" onclick="autoFillField('cms-account')">자동 완성</button>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-label">예금주 명</div>
+                        <div class="form-input-wrapper">
+                            <input type="text" id="cms-name" placeholder="계좌 예금주 명으로 입력해 주세요">
+                        </div>
+                        <button class="btn-auto-fill" onclick="autoFillField('cms-name')">자동 완성</button>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-label">생년월일 (6자리)</div>
+                        <div class="form-input-wrapper">
+                            <input type="text" id="cms-birth" placeholder="예) 900101">
+                        </div>
+                        <button class="btn-auto-fill" onclick="autoFillField('cms-birth')">자동 완성</button>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-label">정기후원일</div>
+                        <div class="form-input-wrapper">
+                            <div class="btn-group-3">
+                                <div class="btn-group-item active" onclick="selectGroupBtn(this, 'cms-date', '5일')">5일</div>
+                                <div class="btn-group-item" onclick="selectGroupBtn(this, 'cms-date', '15일')">15일</div>
+                                <div class="btn-group-item" onclick="selectGroupBtn(this, 'cms-date', '25일')">25일</div>
+                            </div>
+                            <input type="hidden" id="cms-date" value="5일">
+                        </div>
+                        <div></div>
+                    </div>
                 </div>
 
-                <p style="font-weight: 500; margin: 15px 0 5px 0;">2. 5가지 방식 중 가장 기부하고 싶은 방식은?</p>
-                <select id="best-type-select">
-                    <option value="">선택해주세요</option>
-                    <option value="정기">정기 기부 (매달 정기 자동 이체)</option>
-                    <option value="일회성">일회성 기부 (원할 때 한 번만 결제)</option>
-                    <option value="크라우드 펀딩">크라우드 펀딩 (목표 금액 달성 시 기부)</option>
-                    <option value="매칭">매칭 기부 (내가 낸 만큼 기업이 더블 기부)</option>
-                    <option value="신용카드 포인트">카드 연동 기부 (내 잔여 카드 포인트 활용)</option>
-                </select>
+                <!-- [B] 신용카드 패널 (image_50286a.png 참조) -->
+                <div id="panel-card" class="hidden">
+                    <div class="tab-notice">사용하는 카드사가 목록에 없는 경우 비씨(BC)를 선택해주세요.</div>
+                    
+                    <div class="form-row">
+                        <div class="form-label">카드사</div>
+                        <div class="form-input-wrapper">
+                            <select id="card-company">
+                                <option value="">카드사를 선택해주세요</option>
+                                <option value="KB국민">KB국민</option>
+                                <option value="신한카드">신한카드</option>
+                                <option value="삼성카드">삼성카드</option>
+                                <option value="현대카드">현대카드</option>
+                                <option value="NH채움">NH채움(농협)</option>
+                                <option value="비씨">비씨(BC)</option>
+                            </select>
+                        </div>
+                        <button class="btn-auto-fill" onclick="autoFillField('card-company')">자동 완성</button>
+                    </div>
 
-                <button onclick="handleSurveySubmit()" class="btn-submit" style="background: var(--primary-color);">설문 제출하고 마치기</button>
+                    <div class="form-row">
+                        <div class="form-label">카드번호</div>
+                        <div class="form-input-wrapper" style="gap:5px;">
+                            <input type="text" id="card-num-1" maxlength="4" style="text-align:center;"> -
+                            <input type="text" id="card-num-2" maxlength="4" style="text-align:center;"> -
+                            <input type="text" id="card-num-3" maxlength="4" style="text-align:center;"> -
+                            <input type="text" id="card-num-4" maxlength="4" style="text-align:center;">
+                        </div>
+                        <button class="btn-auto-fill" onclick="autoFillField('card-num')">자동 완성</button>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-label">카드유효기간</div>
+                        <div class="form-input-wrapper" style="gap:10px;">
+                            <input type="text" id="card-month" placeholder="MM" maxlength="2" style="width:70px; text-align:center;"> / 
+                            <input type="text" id="card-year" placeholder="YY" maxlength="2" style="width:70px; text-align:center;">
+                        </div>
+                        <button class="btn-auto-fill" onclick="autoFillField('card-expiry')">자동 완성</button>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-label">카드소유자 성명</div>
+                        <div class="form-input-wrapper">
+                            <input type="text" id="card-owner" placeholder="소유자 실명을 입력하세요">
+                        </div>
+                        <button class="btn-auto-fill" onclick="autoFillField('card-owner')">자동 완성</button>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-label">생년월일 (6자리)</div>
+                        <div class="form-input-wrapper">
+                            <input type="text" id="card-birth" placeholder="예) 900101">
+                        </div>
+                        <button class="btn-auto-fill" onclick="autoFillField('card-birth')">자동 완성</button>
+                    </div>
+                </div>
+
+                <!-- [C] 카카오페이 간편 간결화 연동 패널 -->
+                <div id="panel-kakao" class="hidden" style="text-align:center; padding: 20px 0;">
+                    <p style="font-size:14px; color:var(--text-sub); margin-bottom:15px;">카카오톡 앱으로 이동하여 간편하고 안전하게 모바일 결제를 진행합니다.</p>
+                    <button class="btn-easy-pay" style="background:#FEE500; color:#191919;" onclick="triggerEasyPaySimulate('카카오페이')">
+                        💛 카카오페이 모바일 연결하기
+                    </button>
+                </div>
+
+                <!-- [D] 토스페이 간편 간결화 연동 패널 -->
+                <div id="panel-toss" class="hidden" style="text-align:center; padding: 20px 0;">
+                    <p style="font-size:14px; color:var(--text-sub); margin-bottom:15px;">토스 앱 보안 세션으로 연결하여 빠르게 모바일 기부를 진행합니다.</p>
+                    <button class="btn-easy-pay" style="background:#0064FF; color:white;" onclick="triggerEasyPaySimulate('토스페이')">
+                        💙 토스페이 모바일 연결하기
+                    </button>
+                </div>
+
             </div>
 
-            <div id="view-thanks" class="hidden">
-                <span class="material-symbols-outlined" style="font-size: 64px; color: #2a9d8f; margin-bottom: 15px;">task_alt</span>
-                <h2>참여해주셔서 감사합니다!</h2>
-                <div class="desc">제출하신 소중한 데이터는 분석 및 연구 목적으로만 안전하게 활용됩니다.</div>
-            </div>
-
+            <!-- 결제 전송용 하단 최종 버튼 공통 (카카오/토스 탭 제외일 때만 화면 표시제어) -->
+            <button id="btn-pay-submit" onclick="processDonationWithForm()" class="btn-submit" style="margin-top:25px; background:var(--brown-color);">결제 완료 및 후원 신청하기</button>
         </div>
     </div>
 
-    <div id="signup-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeSignupModal()">✕</button>
-            
-            <h3>회원가입하셔야<br>기부가 가능합니다.</h3>
-            
-            <div class="gender-group">
-                <input type="radio" id="g-male" name="gender" value="남성">
-                <label for="g-male">남성</label>
-                <input type="radio" id="g-female" name="gender" value="여성">
-                <label for="g-female">여성</label>
-            </div>
-            
-            <select id="age-select">
-                <option value="">나이대를 선택해주세요</option>
-                <option value="10대">10대</option>
-                <option value="20대">20대</option>
-                <option value="30대">30대</option>
-                <option value="40대">40대</option>
-                <option value="50대 이상">50대 이상</option>
-            </select>
-
-            <div class="consent-box">
-                <input type="checkbox" id="privacy-agree">
-                <label for="privacy-agree">실제 회원가입이 아니며 성별, 연령 외의 정보는 수집하지 않습니다. 수집된 정보는 연구 목적으로만 활용됩니다.</label>
-            </div>
-
-            <button class="btn-submit-modal" onclick="processDonation()">입력 완료 및 기부하기</button>
-            
-            <a href="https://google.com" style="display: block; margin-top: 15px; font-size: 12px; color: #999; text-decoration: none; text-align: center;">기부하지 않고 나가기</a>
-        </div>
+    <!-- ⏳ 로딩 딤 오버레이창 (간편 결제 시뮬레이션용 3초 타이머 전용) -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <h3 id="loading-text" style="margin:0; font-size:16px; color:#333;">모바일 결제 앱 연결 중...</h3>
     </div>
 
+    <!-- 버그 제보 모달 창 레이아웃 보존 -->
     <div id="bug-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <button class="modal-close" onclick="closeBugModal()">✕</button>
             <h3 style="color: var(--text-main); font-size: 20px; margin-bottom: 5px;">개선할 점을 알려주세요!</h3>
-            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 15px; line-height: 1.5;">
-                서비스 이용 중 불편하셨던 점이나 개선 제안을 적어주세요.<br>
-                <strong>답변이 필요한 경우 개인 연락처를 남겨주세요.</strong>
-            </p>
-            
+            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 15px; line-height: 1.5;">서비스 이용 중 불편하셨던 점이나 개선 제안을 자유롭게 적어주세요.</p>
             <textarea id="bug-report-text" rows="5" placeholder="내용을 자유롭게 입력해주세요..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 14px; resize: none; outline: none; box-sizing: border-box;"></textarea>
-            
-            <button class="btn-submit-modal" onclick="submitBugReport()" style="background-color: #2b2d42; margin-top: 15px;">의견 제출하기</button>
+            <button class="btn-submit-modal" onclick="submitBugReport()" style="width:100%; padding:12px; margin-top:15px; border-radius:8px; border:none; background:#2b2d42; color:white; font-weight:bold; cursor:pointer;">의견 제출하기</button>
         </div>
     </div>
 
@@ -398,7 +513,7 @@
     let hasSurveyed = localStorage.getItem('hasSurveyed') === 'true';
     let hasCheckedUsage = false; 
     let db = null;
-    let userCardPoints = 0; 
+    let currentActiveTab = 'cms';
 
     try {
         firebase.initializeApp(firebaseConfig);
@@ -426,15 +541,12 @@
         }
         setupDonationPage();
         
-        // 모바일 환경에서 버그 제보 아이콘 옆에 텍스트 보이게 설정 (CSS로 하면 레이아웃 깨짐 방지)
         if (window.innerWidth <= 768) {
             document.querySelector('.bug-text').style.display = 'inline';
         }
-
         if (db) createVisitLog();
     };
 
-    // 📱 모바일 메뉴 토글 (열기/닫기)
     function toggleMobileMenu() {
         document.getElementById('mobile-menu').classList.toggle('show');
     }
@@ -442,13 +554,38 @@
     function changeTypeDirect(targetType) {
         assignedType = targetType;
         localStorage.setItem('assignedType', targetType);
+        
+        // 결제창 모드에서 메뉴 선택 시 리셋 후 첫 화면으로 원복
+        const wrapper = document.getElementById('main-content-wrapper');
+        wrapper.innerHTML = `
+            <div class="left-banner" id="view-left-banner">
+                <div class="banner-tag">WeGive Campaign</div>
+                <h1>다시 꿈꿀 수 있도록</h1>
+                <p>오늘 한 번의 따뜻한 손길이 결식 아동들의 든든한 한 끼 식사와 더 나은 내일을 만들어 줍니다.</p>
+            </div>
+            <div class="right-content" id="view-donation">
+                <h2 id="donation-title">기부 페이지</h2>
+                <div id="donation-desc" class="desc">방식을 로딩 중입니다...</div>
+                <div id="donation-ui-container" class="donation-ui-box"></div>
+                <button onclick="goToPaymentPage()" class="btn-submit">후원하기</button>
+                <div class="usage-toggle-wrapper">
+                    <button onclick="toggleUsageHistory()" class="btn-usage-toggle">
+                        <span>💡 내가 낸 기부금은 어떻게 사용되나요?</span>
+                        <span id="toggle-icon" class="material-symbols-outlined" style="font-size:18px;">expand_more</span>
+                    </button>
+                    <div id="usage-content" class="usage-content-box hidden"></div>
+                </div>
+            </div>
+            <div class="right-content hidden" id="view-survey"></div>
+            <div class="right-content hidden" id="view-thanks"></div>
+        `;
+
         setupDonationPage();
         visitDocId = null;
         localStorage.removeItem('visitDocId');
         hasCheckedUsage = false; 
         if (db) createVisitLog();
 
-        // 📱 메뉴를 누르면 모바일 드롭다운 메뉴 닫기
         document.getElementById('mobile-menu').classList.remove('show');
     }
 
@@ -479,12 +616,29 @@
             content.classList.remove('hidden');
             icon.innerText = 'expand_less';
 
+            // 정적 내용 채우기 보조
+            content.innerHTML = `
+                <h3>이렇게 진행됩니다</h3>
+                <div class="campaign-meta">
+                    <div class="meta-label">모금기간</div><div>2026.06.20 ~ 2026.08.20</div>
+                    <div class="meta-label">사업기간</div><div>2026.06.20 ~ 2026.10.31</div>
+                    <div class="meta-label">대상</div><div>결식우려아동</div>
+                    <div class="meta-label">대상 수</div><div>100명</div>
+                    <div class="meta-label">기부금 공제</div><div style="grid-column: 2 / -1;">일반기부금</div>
+                </div>
+                <div class="budget-table">
+                    <div class="budget-header"><div class="col-title">목표금액</div><div class="col-value">총 5,000,000원</div></div>
+                    <div class="budget-row"><div class="category">사업비</div><div class="details"><span class="amount">2,750,000원</span><span class="desc">ㄴ 아동 급식 전문 식단 및 식재료 지원</span></div></div>
+                    <div class="budget-row"><div class="category">사업비</div><div class="details"><span class="amount">1,250,000원</span><span class="desc">ㄴ 결식 우려 아동 주거환경 개선 펀드</span></div></div>
+                    <div class="budget-row"><div class="category">사업비</div><div class="details"><span class="amount">750,000원</span><span class="desc">ㄴ 심리 정서 상담 및 맞춤형 교육</span></div></div>
+                    <div class="more-btn-row">더보기 &gt;</div>
+                </div>
+            `;
+
             if (!hasCheckedUsage) {
                 hasCheckedUsage = true;
                 if (db && visitDocId) {
-                    db.collection("donations").doc(visitDocId).update({
-                        checkedUsageHistory: true
-                    }).catch(e => console.error("기록 실패:", e));
+                    db.collection("donations").doc(visitDocId).update({ checkedUsageHistory: true });
                 }
             }
         } else {
@@ -495,15 +649,14 @@
 
     function setupDonationPage() {
         const textInfo = typeContent[assignedType];
-        document.getElementById('donation-title').innerText = textInfo.title;
-        document.getElementById('donation-desc').innerText = textInfo.desc;
+        const titleEl = document.getElementById('donation-title');
+        const descEl = document.getElementById('donation-desc');
+        if(titleEl) titleEl.innerText = textInfo.title;
+        if(descEl) descEl.innerText = textInfo.desc;
 
         const container = document.getElementById('donation-ui-container');
         if(!container) return;
         container.innerHTML = ''; 
-        
-        document.getElementById('usage-content').classList.add('hidden');
-        document.getElementById('toggle-icon').innerText = 'expand_more';
 
         if (assignedType === '정기' || assignedType === '일회성') {
             container.innerHTML = `
@@ -514,154 +667,215 @@
                 </div>
                 <input type="number" class="custom-amount-input" placeholder="기타 금액 직접 입력 (원)">
             `;
-        } 
-        else if (assignedType === '크라우드 펀딩') {
+        } else if (assignedType === '크라우드 펀딩') {
             container.innerHTML = `
-                <div class="funding-info">
-                    <span>현재 달성률 85%</span>
-                    <span style="color:#e63946;">목표: 5,000,000원</span>
-                </div>
+                <div class="funding-info"><span>현재 달성률 85%</span><span style="color:#e63946;">목표: 5,000,000원</span></div>
                 <div class="progress-bar"><div class="progress-fill"></div></div>
                 <p style="margin:5px 0 0 0; font-size:12px; color:var(--text-sub);">펀딩 마감까지 3일 남았습니다.</p>
             `;
-        } 
-        else if (assignedType === '매칭') {
+        } else if (assignedType === '매칭') {
             container.innerHTML = `
                 <div style="font-size:13px; font-weight:bold; color:var(--primary-color); margin-bottom:10px;">🤝 OO네트웍스 X WeGive 더블 매칭 캠페인</div>
                 <div class="amount-grid">
-                    <div class="amount-chip active" onclick="selectChip(this)">10,000 원 후원<br><span style="font-size:10px;color:#999;">+기업 10,000원 추가</span></div>
-                    <div class="amount-chip" onclick="selectChip(this)">20,000 원 후원<br><span style="font-size:10px;color:#999;">+기업 20,000원 추가</span></div>
-                    <div class="amount-chip" onclick="selectChip(this)">50,000 원 후원<br><span style="font-size:10px;color:#999;">+기업 50,000원 추가</span></div>
+                    <div class="amount-chip active" onclick="selectChip(this)">10,000 원 후원<br><span>+기업 10,000원 추가</span></div>
+                    <div class="amount-chip" onclick="selectChip(this)">20,000 원 후원<br><span>+기업 20,000원 추가</span></div>
+                    <div class="amount-chip" onclick="selectChip(this)">50,000 원 후원<br><span>+기업 50,000원 추가</span></div>
                 </div>
             `;
-        } 
-        else if (assignedType === '신용카드 포인트') {
+        } else if (assignedType === '신용카드 포인트') {
             container.innerHTML = `
-                <div class="card-link-box" id="point-query-box">
-                    <p id="point-query-desc" style="margin-top:0; font-size:13px;">간편 인증으로 잠자고 있는 카드 포인트를 한 번에 조회합니다.</p>
-                    <button id="btn-check-points" class="amount-chip btn-link" onclick="checkCardPoints()">
-                        <span class="material-symbols-outlined" style="font-size:18px;">lock</span> 내 보유 카드 포인트 확인하기
-                    </button>
-                </div>
-                
-                <div id="point-result-box" class="hidden" style="margin-top: 15px; text-align: left; background: white; padding: 15px; border-radius: 12px; border: 1px solid var(--border-color);">
-                    <p style="margin: 0 0 10px 0; font-size: 15px; font-weight: bold; color: var(--text-main);">
-                        조회된 기부 가능 포인트: <span id="display-points" style="color: var(--primary-color);">0</span> P
-                    </p>
-                    <div style="margin-top: 10px;">
-                        <input type="number" id="point-input" class="custom-amount-input" placeholder="후원할 포인트를 입력하세요 (P)" style="margin-bottom: 10px;" oninput="validatePointInput(this)">
-                        <label style="font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main);">
-                            <input type="checkbox" id="check-all-points" onchange="toggleAllPoints()" style="cursor: pointer; width: 16px; height: 16px;"> 전액 기부하기
-                        </label>
-                    </div>
+                <div class="card-link-box">
+                    <p style="margin-top:0; font-size:13px; color:var(--green-color); font-weight:bold;">✅ 카드 포인트 조회가 연동되었습니다 (가능 포인트: 15,000 P)</p>
+                    <input type="number" class="custom-amount-input" value="15000" placeholder="후원할 포인트를 입력하세요 (P)">
                 </div>
             `;
-        }
-    }
-
-    function checkCardPoints() {
-        userCardPoints = Math.floor(Math.random() * 281) * 100 + 2000;
-        document.getElementById('display-points').innerText = userCardPoints.toLocaleString();
-        document.getElementById('point-result-box').classList.remove('hidden');
-        document.getElementById('btn-check-points').style.display = 'none';
-        document.getElementById('point-query-desc').innerText = "✅ 카드 포인트 조회가 완료되었습니다.";
-        document.getElementById('point-query-desc').style.color = "var(--green-color)";
-        document.getElementById('point-query-desc').style.fontWeight = "bold";
-    }
-
-    function validatePointInput(inputElem) {
-        let enteredValue = parseInt(inputElem.value);
-        if (enteredValue > userCardPoints) {
-            alert('보유하신 포인트(' + userCardPoints.toLocaleString() + ' P)를 초과하여 기부할 수 없습니다.');
-            inputElem.value = userCardPoints;
-        } else if (enteredValue < 0) {
-            inputElem.value = 0;
-        }
-    }
-
-    function toggleAllPoints() {
-        const checkbox = document.getElementById('check-all-points');
-        const inputField = document.getElementById('point-input');
-        
-        if (checkbox.checked) {
-            inputField.value = userCardPoints;
-        } else {
-            inputField.value = '';
         }
     }
 
     function selectChip(element) {
         const chips = element.parentElement.getElementsByClassName('amount-chip');
         for(let chip of chips) { chip.classList.remove('active'); }
+        element.add ? element.add('active') : element.classList.add('active');
+    }
+
+    /* ➡️ 2단계 진입: 메인 배너와 정보입력창 전체를 결제 정보 페이지로 완벽 대체 교체 */
+    function goToPaymentPage() {
+        const wrapper = document.getElementById('main-content-wrapper');
+        const templateHTML = document.getElementById('payment-page-template').innerHTML;
+        
+        // 전체 구조 전환 밀어넣기
+        wrapper.innerHTML = templateHTML;
+        
+        // 기본 탭 세팅 활성화 적용
+        switchPayTab('cms');
+    }
+
+    /* 🔀 결제 수단별 이미지 매핑 메뉴 전환 함수 (CMS, 신용카드, 카카오, 토스) */
+    function switchPayTab(tabId) {
+        currentActiveTab = tabId;
+        const tabs = ['cms', 'card', 'kakao', 'toss'];
+        
+        // 탭 메뉴 클래스 활성화 토글처리
+        tabs.forEach(t => {
+            const el = document.getElementById(`tab-${t}`);
+            if(el) el.classList.remove('active');
+        });
+        const activeTabEl = document.getElementById(`tab-${tabId}`);
+        if(activeTabEl) activeTabEl.classList.add('active');
+
+        // 패널 콘텐츠 토글
+        tabs.forEach(t => {
+            const panel = document.getElementById(`panel-${t}`);
+            if(panel) panel.classList.add('hidden');
+        });
+        const activePanelEl = document.getElementById(`panel-${tabId}`);
+        if(activePanelEl) activePanelEl.classList.remove('hidden');
+
+        // 간편 결제 전용 탭일 때는 아래 공통 일반 전송버튼 숨김
+        const submitBtn = document.getElementById('btn-pay-submit');
+        if(submitBtn) {
+            if(tabId === 'kakao' || tabId === 'toss') {
+                submitBtn.classList.add('hidden');
+            } else {
+                submitBtn.classList.remove('hidden');
+            }
+        }
+    }
+
+    function selectGroupBtn(element, hiddenInputId, value) {
+        const items = element.parentElement.getElementsByClassName('btn-group-item');
+        for(let item of items) { item.classList.remove('active'); }
         element.classList.add('active');
+        document.getElementById(hiddenInputId).value = value;
     }
 
-    function showView(viewId) {
-        document.getElementById('view-donation').classList.add('hidden');
-        document.getElementById('view-survey').classList.add('hidden');
-        document.getElementById('view-thanks').classList.add('hidden');
-        document.getElementById(viewId).classList.remove('hidden');
-    }
-
-    function openSignupModal() { document.getElementById('signup-modal').classList.remove('hidden'); }
-    function closeSignupModal() { document.getElementById('signup-modal').classList.add('hidden'); }
-
-    function openBugModal() { 
-        document.getElementById('bug-modal').classList.remove('hidden'); 
-        document.getElementById('mobile-menu').classList.remove('show'); // 📱 모바일 드롭다운 메뉴 닫기
-    }
-    
-    function closeBugModal() { 
-        document.getElementById('bug-modal').classList.add('hidden'); 
-        document.getElementById('bug-report-text').value = ''; 
-    }
-
-    function submitBugReport() {
-        const text = document.getElementById('bug-report-text').value.trim();
-        if (!text) { 
-            alert('의견을 입력해주세요.'); 
-            return; 
-        }
-
-        if (db) {
-            db.collection("bug_reports").add({
-                message: text,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(() => {
-                alert('소중한 의견이 정상적으로 접수되었습니다. 감사합니다!');
-                closeBugModal();
-            })
-            .catch((error) => {
-                console.error("제보 에러: ", error);
-                alert('일시적인 오류가 발생했습니다. 다시 시도해주세요.');
-            });
+    /* 🤖 각 항목별 정해진 규칙 형태의 모의 '자동 완성' 지원 장치 기믹 */
+    function autoFillField(fieldType) {
+        if(fieldType === 'gender') {
+            document.getElementById('pay-gender').value = '남성';
+        } else if(fieldType === 'age') {
+            document.getElementById('pay-age').value = '20대';
+        } else if(fieldType === 'agree') {
+            document.getElementById('pay-agree').checked = true;
+        } else if(fieldType === 'cms-bank') {
+            document.getElementById('cms-bank').value = '카카오뱅크';
+        } else if(fieldType === 'cms-account') {
+            document.getElementById('cms-account').value = Math.floor(100000000000 + Math.random() * 900000000000);
+        } else if(fieldType === 'cms-name') {
+            document.getElementById('cms-name').value = '홍길동';
+        } else if(fieldType === 'cms-birth' || fieldType === 'card-birth') {
+            const birthId = document.getElementById('cms-birth') ? 'cms-birth' : 'card-birth';
+            const el = document.getElementById(birthId);
+            if(el) el.value = '950815';
+            else {
+                if(document.getElementById('cms-birth')) document.getElementById('cms-birth').value = '950815';
+                if(document.getElementById('card-birth')) document.getElementById('card-birth').value = '950815';
+            }
+        } else if(fieldType === 'card-company') {
+            document.getElementById('card-company').value = 'KB국민';
+        } else if(fieldType === 'card-num') {
+            document.getElementById('card-num-1').value = '9410';
+            document.getElementById('card-num-2').value = '4211';
+            document.getElementById('card-num-3').value = String(Math.floor(1000 + Math.random() * 9000));
+            document.getElementById('card-num-4').value = String(Math.floor(1000 + Math.random() * 9000));
+        } else if(fieldType === 'card-expiry') {
+            document.getElementById('card-month').value = '11';
+            document.getElementById('card-year').value = '30';
+        } else if(fieldType === 'card-owner') {
+            document.getElementById('card-owner').value = '홍길동';
         }
     }
 
-    function processDonation() {
-        const genderNode = document.querySelector('input[name="gender"]:checked');
-        const age = document.getElementById('age-select').value;
-        const isAgreed = document.getElementById('privacy-agree').checked;
+    /* ⏳ 카카오페이 / 토스페이 3초 모바일 간편결제 연동 지연 컴포넌트 */
+    function triggerEasyPaySimulate(appName) {
+        const gender = document.getElementById('pay-gender').value;
+        const age = document.getElementById('pay-age').value;
+        const isAgreed = document.getElementById('pay-agree').checked;
 
-        if (!genderNode || !age) { alert('성별과 나이대를 선택해주세요.'); return; }
-        if (!isAgreed) { alert('정보 수집 활용 안내에 체크해 주세요.'); return; }
+        if (!gender || !age) { alert('후원자 정보(성별, 나이대)를 먼저 선택해 주세요.'); return; }
+        if (!isAgreed) { alert('연구 정보 수집 활용 약관에 동의해 주세요.'); return; }
 
+        const overlay = document.getElementById('loading-overlay');
+        const text = document.getElementById('loading-text');
+        
+        overlay.classList.remove('hidden');
+        text.innerText = `📲 ${appName} 모바일 앱으로 안전하게 연결 중입니다...`;
+
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+            alert(`✅ ${appName} 모의 인증 및 간편 결제가 안전하게 처리 완료되었습니다.`);
+            saveDataAndGoToSurvey(gender, age);
+        }, 3000);
+    }
+
+    /* 일반 폼 최종 결제 처리단 */
+    function processDonationWithForm() {
+        const gender = document.getElementById('pay-gender').value;
+        const age = document.getElementById('pay-age').value;
+        const isAgreed = document.getElementById('pay-agree').checked;
+
+        if (!gender || !age) { alert('후원자 정보(성별, 나이대)를 입력하거나 자동 완성 버튼을 눌러주세요.'); return; }
+        if (!isAgreed) { alert('연구 약관 이용 동의서에 체크해 주세요.'); return; }
+
+        // 수단별 기본 벨리데이션 스킵 유도 검증
+        if (currentActiveTab === 'cms') {
+            if(!document.getElementById('cms-bank').value || !document.getElementById('cms-account').value) {
+                alert('계좌이체 상세 정보를 입력하거나 자동 완성을 활용해 주세요.'); return;
+            }
+        } else if (currentActiveTab === 'card') {
+            if(!document.getElementById('card-company').value || !document.getElementById('card-num-1').value) {
+                alert('신용카드 상세 결제 정보를 입력하거나 자동 완성을 이용해 주세요.'); return;
+            }
+        }
+
+        saveDataAndGoToSurvey(gender, age);
+    }
+
+    /* 파이어베이스 연동 데이터 전송 및 설문창 뷰 전환 허브 */
+    function saveDataAndGoToSurvey(gender, age) {
         if (db && visitDocId) {
             db.collection("donations").doc(visitDocId).update({
-                gender: genderNode.value,
+                gender: gender,
                 age: age,
                 hasDonated: true
             })
-            .then(() => {
-                closeSignupModal();
-                showView('view-survey');
-            })
-            .catch((error) => console.error("업데이트 에러: ", error));
+            .then(() => { reloadToSurveyView(); })
+            .catch(() => { reloadToSurveyView(); });
         } else {
-            closeSignupModal();
-            showView('view-survey');
+            reloadToSurveyView();
         }
+    }
+
+    /* 전체 메인 래퍼 본문 내용을 설문 양식 전용 뷰 형태로 복구 및 리프레시 */
+    function reloadToSurveyView() {
+        const wrapper = document.getElementById('main-content-wrapper');
+        
+        // 설문조사 단독 집중 화면으로 재구성
+        wrapper.innerHTML = `
+            <div class="right-content" id="view-survey" style="flex:1; max-width:600px; margin:0 auto;">
+                <h2>의견 제출 (마지막 단계)</h2>
+                <div class="desc">실제 결제는 일어나지 않았으니 안심하세요.<br>아래 설문에 응해주시면 연구에 큰 도움이 됩니다.</div>
+                <hr style="border: 0.5px solid var(--border-color); margin-bottom: 20px;">
+                <p style="font-weight: 500; margin: 0 0 5px 0;">1. 방금 체험하신 기부 방식은 편리했나요?</p>
+                <div class="stars">
+                    <input type="radio" id="st5" name="rating" value="5"><label for="st5">★</label>
+                    <input type="radio" id="st4" name="rating" value="4"><label for="st4">★</label>
+                    <input type="radio" id="st3" name="rating" value="3"><label for="st3">★</label>
+                    <input type="radio" id="st2" name="rating" value="2"><label for="st2">★</label>
+                    <input type="radio" id="st1" name="rating" value="1"><label for="st1">★</label>
+                </div>
+                <p style="font-weight: 500; margin: 15px 0 5px 0;">2. 5가지 방식 중 가장 기부하고 싶은 방식은?</p>
+                <select id="best-type-select">
+                    <option value="">선택해주세요</option>
+                    <option value="정기">정기 기부 (매달 정기 자동 이체)</option>
+                    <option value="일회성">일회성 기부 (원할 때 한 번만 결제)</option>
+                    <option value="크라우드 펀딩">크라우드 펀딩 (목표 금액 달성 시 기부)</option>
+                    <option value="매칭">매칭 기부 (내가 낸 만큼 기업이 더블 기부)</option>
+                    <option value="신용카드 포인트">카드 연동 기부 (내 잔여 카드 포인트 활용)</option>
+                </select>
+                <button onclick="handleSurveySubmit()" class="btn-submit" style="background: var(--primary-color);">설문 제출하고 마치기</button>
+            </div>
+        `;
     }
 
     function handleSurveySubmit() {
@@ -675,14 +889,47 @@
                 rating: parseInt(ratingNode.value),
                 bestType: bestType
             })
-            .then(() => {
-                localStorage.setItem('hasSurveyed', 'true');
-                showView('view-thanks');
-            })
-            .catch((error) => console.error("설문 제출 에러: ", error));
+            .then(() => { showFinalThanks(); })
+            .catch(() => { showFinalThanks(); });
         } else {
-            localStorage.setItem('hasSurveyed', 'true');
-            showView('view-thanks');
+            showFinalThanks();
+        }
+    }
+
+    function showFinalThanks() {
+        localStorage.setItem('hasSurveyed', 'true');
+        const wrapper = document.getElementById('main-content-wrapper');
+        wrapper.innerHTML = `
+            <div class="right-content" style="flex:1; max-width:600px; margin:0 auto; text-align:center; padding:50px 30px;">
+                <span class="material-symbols-outlined" style="font-size: 64px; color: #2a9d8f; margin-bottom: 15px;">task_alt</span>
+                <h2>참여해주셔서 감사합니다!</h2>
+                <div class="desc">제출하신 소중한 데이터는 UI/UX 분석 연구 목적으로만 안전하게 활용됩니다.</div>
+            </div>
+        `;
+    }
+
+    function showView(viewId) {
+        // 단독 다이렉트 완료 진입 대응용 보조 상상 구현부
+        if(viewId === 'view-thanks') { showFinalThanks(); }
+    }
+
+    function openBugModal() { 
+        document.getElementById('bug-modal').classList.remove('hidden'); 
+        document.getElementById('mobile-menu').classList.remove('show');
+    }
+    function closeBugModal() { 
+        document.getElementById('bug-modal').classList.add('hidden'); 
+        document.getElementById('bug-report-text').value = ''; 
+    }
+    function submitBugReport() {
+        const text = document.getElementById('bug-report-text').value.trim();
+        if (!text) { alert('의견을 입력해주세요.'); return; }
+        if (db) {
+            db.collection("bug_reports").add({
+                message: text,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => { alert('의견이 접수되었습니다.'); closeBugModal(); });
         }
     }
 </script>

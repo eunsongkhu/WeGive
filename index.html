@@ -689,14 +689,32 @@
         } // setupDonationPage() 함수 내부의 해당 블록을 교체하세요
 else if (assignedType === '신용카드 포인트') {
     container.innerHTML = `
-        <div class="card-link-box" id="point-link-wrapper" style="text-align: center; padding: 10px 0;">
-            <p style="margin-top:0; font-size:14px; color:var(--text-sub);">기부 가능한 잔여 카드 포인트를 안전하게 조회합니다.</p>
-            <button onclick="connectCardPoints()" class="btn-link" style="border-color: var(--primary-color); color: var(--text-main); background: #fff; font-weight: bold;">
-                <span class="material-symbols-outlined" style="font-size:20px;">credit_card</span>
-                내 카드 포인트 조회 및 연동하기
-            </button>
+        <div class="card-link-box" id="point-link-wrapper" style="text-align: center; padding: 15px 0;">
+            <p style="margin-top:0; font-size:14px; color:var(--text-sub); margin-bottom:15px;">기부 가능한 잔여 카드 포인트를 안전하게 조회합니다.</p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button onclick="connectCardPoints('normal')" class="btn-link" style="border-color: var(--primary-color); color: var(--text-main); background: #fff; font-weight: bold; padding: 10px 16px;">
+                    <span class="material-symbols-outlined" style="font-size:20px;">credit_card</span>
+                    내 카드 포인트 조회 및 연동
+                </button>
+                <button onclick="connectCardPoints('appcard')" class="btn-link" style="border-color: var(--primary-color); color: #fff; background: var(--primary-color); font-weight: bold; padding: 10px 16px;">
+                    <span class="material-symbols-outlined" style="font-size:20px;">phonelink_setup</span>
+                    앱카드로 연동하기
+                </button>
+            </div>
+            <div id="point-loading-status" style="margin-top: 15px; display: none; color: var(--primary-color); font-weight: bold; font-size: 14px;">
+                <span class="spinner" style="display:inline-block; animation: spin 1s linear infinite; margin-right:5px;">⏳</span> 
+                안전하게 카드 포인트를 조회 중입니다. 잠시만 기다려주세요...
+            </div>
         </div>
     `;
+
+    // ⏳ 로딩 스피너 애니메이션이 CSS에 없다면 추가하기 위해 체크
+    if (!document.getElementById('spinner-style')) {
+        const style = document.createElement('style');
+        style.id = 'spinner-style';
+        style.innerHTML = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
+        document.head.appendChild(style);
+    }
 }
     }
 
@@ -704,6 +722,47 @@ else if (assignedType === '신용카드 포인트') {
         const chips = element.parentElement.getElementsByClassName('amount-chip');
         for(let chip of chips) { chip.classList.remove('active'); }
         element.add ? element.add('active') : element.classList.add('active');
+    }
+
+    // 💳 카드 포인트 연동 (2초 딜레이 기능 포함)
+function connectCardPoints(type) {
+    const wrapper = document.getElementById('point-link-wrapper');
+    const loadingStatus = document.getElementById('point-loading-status');
+    if (!wrapper || !loadingStatus) return;
+
+    // 버튼 영역 잠시 숨기고 로딩바 표시
+    const buttons = wrapper.querySelector('div');
+    if (buttons) buttons.style.display = 'none';
+    loadingStatus.style.display = 'block';
+
+    // 정확히 2초(2000ms) 후에 포인트 결과 출력
+    setTimeout(() => {
+        // 2,000P ~ 45,000P 사이의 1,000원 단위 랜덤 포인트 생성
+        const randomPoint = Math.floor(Math.random() * (45 - 2 + 1) + 2) * 1000;
+        const methodTitle = type === 'appcard' ? '앱카드 연동' : '카드 포인트 조회';
+
+        wrapper.innerHTML = `
+            <p style="margin-top:0; font-size:13px; color: var(--green-color); font-weight:bold; display:flex; align-items:center; justify-content:center; gap:4px;">
+                <span class="material-symbols-outlined" style="font-size:18px;">check_circle</span>
+                ${methodTitle}가 완료되었습니다. (가능 포인트: ${randomPoint.toLocaleString()} P)
+            </p>
+            <input type="number" id="custom-point-input" class="custom-amount-input" value="${randomPoint}" placeholder="후원할 포인트를 입력하세요 (P)">
+        `;
+    }, 2000);
+}
+
+    // 🎯 [핵심 수정] 카드 포인트 기부일 경우 결제창 없이 바로 설문으로 이동
+    if (assignedType === '신용카드 포인트') {
+        const pointInput = document.getElementById('custom-point-input');
+        if (!pointInput || !pointInput.value || pointInput.value <= 0) {
+            alert('포인트 연동을 먼저 완료해 주세요.');
+            return;
+        }
+        
+        // 데이터 저장 및 설문조사 페이지로 즉시 전환
+        localStorage.setItem('donationAmount', pointInput.value);
+        showView('view-survey'); // 팝업/결제단계 건너뛰고 바로 설문 뷰로 이동
+        return; 
     }
 
     /* ➡️ 2단계 진입: 메인 배너와 정보입력창 전체를 결제 정보 페이지로 완벽 대체 교체 */

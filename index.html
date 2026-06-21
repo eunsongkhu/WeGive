@@ -23,31 +23,30 @@
         .hidden { display: none !important; }
 
         /* 상단 네비게이션 & 사이드바 */
-        header {
-            background: white;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            position: fixed; width: 100%; top: 0; z-index: 900;
-        }
-        .menu-btn { cursor: pointer; background: none; border: none; font-size: 24px; padding: 5px; display: flex; align-items: center; color: var(--text-main); width: auto; margin: 0; }
-        .logo { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-left: 15px; }
-        
-        .sidebar {
-            position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
-            background: white; box-shadow: 4px 0 15px rgba(0,0,0,0.1);
-            transition: left 0.3s ease; z-index: 999; padding: 20px;
-        }
-        .sidebar.open { left: 0; }
-        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .sidebar-header h3 { margin: 0; font-size: 18px; }
-        .sidebar-menu { list-style: none; padding: 0; margin: 0; }
-        .sidebar-menu li { padding: 14px 15px; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; font-weight: 500; display: flex; align-items: center; gap: 10px; }
-        .sidebar-menu li:hover { background: var(--primary-light); color: var(--primary-color); }
-        .sidebar-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index: 950; display: none; }
-        .sidebar-overlay.show { display: block; }
+       /* 상단 헤더 & 가로 네비게이션 */
+header {
+    background: white;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 양쪽 끝으로 배치 */
+    padding: 0 40px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: fixed; width: 100%; top: 0; z-index: 900;
+}
+.logo { font-size: 20px; font-weight: 700; color: var(--primary-color); }
+
+/* 상단 가로 메뉴바 스타일 */
+.top-menu { list-style: none; padding: 0; margin: 0; display: flex; gap: 20px; }
+.top-menu li { cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-main); transition: color 0.2s; }
+.top-menu li:hover { color: var(--primary-color); font-weight: 700; }
+
+@media (max-width: 768px) {
+    header { padding: 0 15px; justify-content: center; flex-direction: column; height: auto; padding-bottom: 10px; }
+    .logo { margin: 10px 0; }
+    .top-menu { flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .top-menu li { font-size: 12px; }
+}
 
         /* 메인 2분할 레이아웃 컨테이너 */
         .main-wrapper {
@@ -102,7 +101,22 @@
         /* 팝업(모달) 스타일 */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: white; padding: 30px 25px 25px 25px; border-radius: 20px; width: 90%; max-width: 380px; text-align: center; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; }
-        .modal-close { position: absolute; top: 15px; right: 15px; cursor: pointer; color: var(--text-sub); background: none; border: none; width: auto; padding: 0; margin: 0; }
+        /* 팝업(모달) 우측 상단 X 버튼 작고 옅은 회색으로 변경 */
+.modal-close { 
+    position: absolute; 
+    top: 15px; 
+    right: 15px; 
+    cursor: pointer; 
+    color: #999; /* 옅은 회색 */
+    background: none; 
+    border: none; 
+    font-size: 16px; /* 크기 축소 */
+    font-weight: bold;
+    padding: 5px; 
+}
+.modal-close:hover {
+    color: #555;
+}
         .modal-content h3 { margin-top: 5px; font-size: 19px; color: #d62828; line-height: 1.4; }
         
         .gender-group { display: flex; justify-content: space-around; margin: 15px 0; }
@@ -204,7 +218,7 @@
 
     <div id="signup-modal" class="modal-overlay hidden">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeSignupModal()"><span class="material-symbols-outlined">close</span></button>
+<button class="modal-close" onclick="closeSignupModal()">✕</button>
             
             <h3>회원가입하셔야<br>기부가 가능합니다.</h3>
             

@@ -67,7 +67,7 @@
         .custom-amount-input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; outline: none; }
 
         .card-link-box { text-align: center; padding: 5px 0; }
-        .btn-link { background: white; border: 1px solid var(--primary-color); color: var(--primary-color); display: inline-flex; align-items: center; gap: 5px; width: auto; justify-content: center; padding: 10px 20px; }
+        .btn-link { background: white; border: 1px solid var(--primary-color); color: var(--primary-color); display: inline-flex; align-items: center; gap: 5px; width: auto; justify-content: center; padding: 10px 20px; cursor: pointer; }
 
         .btn-submit { background-color: #e63946; color: white; border: none; font-size: 16px; font-weight: 700; padding: 15px; border-radius: 12px; cursor: pointer; width: 100%; transition: background 0.2s; margin: 0; }
         .btn-submit:hover { background-color: #cb2d3a; }
@@ -132,7 +132,7 @@
             .top-menu { flex-wrap: wrap; justify-content: center; gap: 10px; }
             .top-menu li { font-size: 13px; }
             .main-wrapper { flex-direction: column; min-height: auto; margin-top: 20px; }
-            .left-banner { min-height: 200px; padding: 20px; height: auto; } /* 모바일에서는 가로 적응형으로 리셋 */
+            .left-banner { min-height: 200px; padding: 20px; height: auto; }
             .right-content { padding: 25px; }
             .campaign-meta { grid-template-columns: max-content auto; gap: 8px 15px; }
             .budget-header, .budget-row { flex-direction: column; gap: 5px; }
@@ -170,6 +170,7 @@
 
                 <button onclick="openSignupModal()" class="btn-submit">후원 완료하기</button>
 
+                <!-- 📋 기부금 투명성 영역 -->
                 <div class="usage-toggle-wrapper">
                     <button onclick="toggleUsageHistory()" class="btn-usage-toggle">
                         <span>💡 내가 낸 기부금은 어떻게 사용되나요?</span>
@@ -313,6 +314,7 @@
     let hasSurveyed = localStorage.getItem('hasSurveyed') === 'true';
     let hasCheckedUsage = false; 
     let db = null;
+    let userCardPoints = 0; // 카드 포인트 저장용 변수 추가
 
     try {
         firebase.initializeApp(firebaseConfig);
@@ -436,14 +438,57 @@
             `;
         } 
         else if (assignedType === '신용카드 포인트') {
+            // 포인트 조회 UI 업데이트 적용
             container.innerHTML = `
-                <div class="card-link-box">
-                    <p style="margin-top:0; font-size:13px;">간편 인증으로 잠자고 있는 카드 포인트를 한 번에 조회합니다.</p>
-                    <button class="amount-chip btn-link" onclick="alert('카드사 연동 완료! 전액 기부 가능 포인트: 14,200 P')">
+                <div class="card-link-box" id="point-query-box">
+                    <p id="point-query-desc" style="margin-top:0; font-size:13px;">간편 인증으로 잠자고 있는 카드 포인트를 한 번에 조회합니다.</p>
+                    <button id="btn-check-points" class="amount-chip btn-link" onclick="checkCardPoints()">
                         <span class="material-symbols-outlined" style="font-size:18px;">lock</span> 내 보유 카드 포인트 확인하기
                     </button>
                 </div>
+                
+                <div id="point-result-box" class="hidden" style="margin-top: 15px; text-align: left; background: white; padding: 15px; border-radius: 12px; border: 1px solid var(--border-color);">
+                    <p style="margin: 0 0 10px 0; font-size: 15px; font-weight: bold; color: var(--text-main);">
+                        조회된 기부 가능 포인트: <span id="display-points" style="color: var(--primary-color);">0</span> P
+                    </p>
+                    <div style="margin-top: 10px;">
+                        <input type="number" id="point-input" class="custom-amount-input" placeholder="후원할 포인트를 입력하세요 (P)" style="margin-bottom: 10px;">
+                        <label style="font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main);">
+                            <input type="checkbox" id="check-all-points" onchange="toggleAllPoints()" style="cursor: pointer; width: 16px; height: 16px;"> 전액 기부하기
+                        </label>
+                    </div>
+                </div>
             `;
+        }
+    }
+
+    // 신용카드 포인트 랜덤 조회 기능
+    function checkCardPoints() {
+        // 2000원 ~ 30000원 사이 100단위 랜덤 난수 생성
+        userCardPoints = Math.floor(Math.random() * 281) * 100 + 2000;
+        
+        // 생성된 포인트를 화면에 표시
+        document.getElementById('display-points').innerText = userCardPoints.toLocaleString();
+        
+        // 숨겨진 입력창 및 전액 기부 영역 표시
+        document.getElementById('point-result-box').classList.remove('hidden');
+        
+        // 조회 버튼 숨기기 & 설명 텍스트 변경
+        document.getElementById('btn-check-points').style.display = 'none';
+        document.getElementById('point-query-desc').innerText = "✅ 카드 포인트 조회가 완료되었습니다.";
+        document.getElementById('point-query-desc').style.color = "var(--green-color)";
+        document.getElementById('point-query-desc').style.fontWeight = "bold";
+    }
+
+    // 전액 기부 체크박스 토글 기능
+    function toggleAllPoints() {
+        const checkbox = document.getElementById('check-all-points');
+        const inputField = document.getElementById('point-input');
+        
+        if (checkbox.checked) {
+            inputField.value = userCardPoints;
+        } else {
+            inputField.value = '';
         }
     }
 
